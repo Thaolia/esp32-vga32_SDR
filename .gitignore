@@ -1,0 +1,6 @@
+build/
+sdkconfig
+sdkconfig.old
+tests/target/*/sdkconfig
+tests/target/*/sdkconfig.old
+__pycache__/

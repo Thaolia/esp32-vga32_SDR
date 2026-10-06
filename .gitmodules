@@ -1,0 +1,6 @@
+[submodule "third_party/FabGL"]
+	path = third_party/FabGL
+	url = https://github.com/shaeberling/FabGL
+[submodule "third_party/esp-sdr"]
+	path = third_party/esp-sdr
+	url = https://github.com/ESPARGOS/esp-sdr

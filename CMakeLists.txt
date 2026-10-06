@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.16)
+# FabGL est consommé directement depuis le submodule (composant "FabGL")
+set(EXTRA_COMPONENT_DIRS "${CMAKE_CURRENT_LIST_DIR}/third_party/FabGL")
+set(ENV{IDF_COMPONENT_MANAGER} "0")
+include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+project(vga32_sdr)
