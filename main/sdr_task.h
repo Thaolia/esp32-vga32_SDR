@@ -22,6 +22,8 @@ typedef struct {
 void sdr_task_start(const app_settings_t *initial);
 void sdr_task_request(const app_settings_t *settings);
 bool sdr_task_get_frame(spectrum_frame_t *out, uint32_t timeout_ms);
+/* Compteur cumulé d'échecs de capture, à jour même si aucune trame n'est publiée */
+uint32_t sdr_task_capture_errors(void);
 
 #ifdef __cplusplus
 }

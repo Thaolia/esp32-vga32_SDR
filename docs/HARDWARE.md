@@ -45,4 +45,7 @@ le clavier dans ce cas.
 | Contrôle série : Shift+→, `r`, `g` | Bandeau `2447 MHz 80 MS/s G40` |
 | Compteur `err` après plusieurs minutes | 0 |
 | Hotspot téléphone | Bosse visible dans le spectre et le waterfall |
+| Orientation du spectre (centre 2457 MHz, 80 MS/s) | Bosse du hotspot à gauche du repère, vers 2437 MHz : correcte |
+| Palette après revue (texte 15, colormap 3–14) et spectre en une passe | Couleurs correctes, pas de scintillement |
+| Piles / heap (retunes 2437, 2436, 1996 MHz) | `sdr` 2 560 o libres, `ui` 2 976 o libres, heap établi 14 276 o |
 | Contrôle PS/2 | Non validé : pas de clavier PS/2 compatible disponible |

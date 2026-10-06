@@ -1,4 +1,5 @@
 #include "sdr_task.h"
+#include <stdatomic.h>
 #include "esp_log.h"
 #include "espsdr_rx.h"
 #include "freertos/FreeRTOS.h"
@@ -14,6 +15,7 @@ static app_settings_t s_requested;
 static uint32_t s_requested_version;
 static SemaphoreHandle_t s_lock;
 static SemaphoreHandle_t s_frame_ready;
+static atomic_uint s_capture_errors; /* lu par l'UI même quand aucune trame n'est publiée */
 
 static espsdr_rate_t to_hw_rate(app_rate_t rate)
 {
@@ -33,7 +35,7 @@ static void sdr_task(void *arg)
 {
     (void)arg;
     app_settings_t active = {0};
-    uint32_t applied_version = 0, errors = 0, seq = 0;
+    uint32_t applied_version = 0, seq = 0;
     bool first = true;
     sd_init(&s_dsp);
     for (;;) {
@@ -55,13 +57,13 @@ static void sdr_task(void *arg)
                 sd_accumulate(&s_dsp, words);  /* avant la capture suivante : words est écrasé */
                 us = elapsed;
             } else {
-                errors++;
+                atomic_fetch_add(&s_capture_errors, 1u);
             }
         }
         if (sd_finish_db(&s_dsp, s_work.db)) {
             s_work.settings = active;
             s_work.seq = ++seq;
-            s_work.capture_errors = errors;
+            s_work.capture_errors = atomic_load(&s_capture_errors);
             s_work.capture_us = us;
             xSemaphoreTake(s_lock, portMAX_DELAY);
             s_shared = s_work;
@@ -100,4 +102,9 @@ bool sdr_task_get_frame(spectrum_frame_t *out, uint32_t timeout_ms)
     *out = s_shared;
     xSemaphoreGive(s_lock);
     return true;
+}
+
+uint32_t sdr_task_capture_errors(void)
+{
+    return atomic_load(&s_capture_errors);
 }

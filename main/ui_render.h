@@ -9,3 +9,5 @@ constexpr int UI_HEIGHT = 384;
 
 void ui_begin(fabgl::VGA16Controller &vga, fabgl::Canvas &canvas);
 void ui_draw_frame(const spectrum_frame_t &frame, const app_view_t &view, bool keyboard_ok);
+// Bandeau seul : rafraîchit le compteur d'erreurs quand aucune trame n'arrive
+void ui_draw_status(const spectrum_frame_t &frame, const app_view_t &view, bool keyboard_ok);

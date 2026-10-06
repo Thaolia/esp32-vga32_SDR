@@ -20,7 +20,7 @@ Le RMS varie avec l'AGC et l'environnement RF ; il n'est pas comparable entre le
 
 ## Décision
 
-Design nominal **dual-core** retenu. Pas de repli unicore, pas de patch FabGL `0002`.
+Design nominal **dual-core** retenu. Pas de repli unicore (le patch FabGL `0002-unicore-video-core` prévu au plan n'a pas été créé ; le numéro 0002 a ensuite servi à `0002-configurable-minfreelargestblock`).
 
 ## Notes
 

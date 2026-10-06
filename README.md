@@ -3,7 +3,7 @@
 Analyseur de spectre autonome pour la carte **TTGO VGA32** (ESP32 classique) : la radio Wi-Fi capture des
 rafales I/Q brutes (technique [ESPARGOS/esp-sdr](https://github.com/ESPARGOS/esp-sdr)), l'ESP32 calcule
 une FFT et affiche un **spectre + waterfall** sur un écran VGA via [FabGL](https://github.com/shaeberling/FabGL).
-Pilotage au clavier PS/2.
+Pilotage au clavier PS/2 ou par le terminal série (`idf.py monitor`).
 
 - Bande cible : 2,4 GHz (accord logiciel 100–6000 MHz, hors 2,4 GHz = expérimental)
 - Span : 16, 40 ou 80 MS/s (horloges matérielles), FFT 1024 points, moyenne de 8 rafales
