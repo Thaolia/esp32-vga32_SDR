@@ -1,0 +1,16 @@
+diff --git a/src/network/netutils.cpp b/src/network/netutils.cpp
+index 5280176a..40256a78 100644
+--- a/src/network/netutils.cpp
++++ b/src/network/netutils.cpp
+@@ -145,9 +145,9 @@ WiFiConnectionState WiFiConnection::connect(char const * ssid, char const * pass
+ 
+     wifi_config_t wifi_config;
+     memset(&wifi_config, 0, sizeof(wifi_config));
+-    strncpy((char *)wifi_config.sta.ssid, ssid, strlen(ssid));
++    memcpy(wifi_config.sta.ssid, ssid, std::min(strlen(ssid), sizeof(wifi_config.sta.ssid)));
+     if (password)
+-      strncpy((char *)wifi_config.sta.password, password, strlen(password));
++      memcpy(wifi_config.sta.password, password, std::min(strlen(password), sizeof(wifi_config.sta.password)));
+ 
+     esp_wifi_set_mode(WIFI_MODE_STA);
+     esp_wifi_set_config(WIFI_IF_STA, &wifi_config);
