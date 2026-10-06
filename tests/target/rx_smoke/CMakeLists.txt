@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.16)
+get_filename_component(ROOT "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
+set(EXTRA_COMPONENT_DIRS "${ROOT}/components/espsdr_rx")
+set(SDKCONFIG_DEFAULTS "${ROOT}/sdkconfig.defaults")
+set(ENV{IDF_COMPONENT_MANAGER} "0")
+include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+project(rx_smoke)
