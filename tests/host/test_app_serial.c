@@ -87,6 +87,27 @@ static int test_esc_then_letter(void)
     return 0;
 }
 
+static int test_ss3_cursor_keys(void)
+{
+    /* Mode « application cursor keys » (DECCKM) : ESC O x */
+    CHECK(!expect("\x1bOC", APP_CMD_FREQ_UP_1));
+    CHECK(!expect("\x1bOD", APP_CMD_FREQ_DOWN_1));
+    CHECK(!expect("\x1bOA", APP_CMD_REF_UP));
+    CHECK(!expect("\x1bOB", APP_CMD_REF_DOWN));
+    app_serial_t d;
+    app_cmd_t got;
+    app_serial_init(&d);
+    CHECK(feed(&d, "\x1bOR\x1bOP", &got) == 0); /* F3, F1 : ignorées, pas RATE_CYCLE */
+    CHECK(feed(&d, "g", &got) == 1 && got == APP_CMD_AGC_TOGGLE);
+    return 0;
+}
+
+static int test_esc_esc_key(void)
+{
+    CHECK(!expect("\x1b\x1b[C", APP_CMD_FREQ_UP_1));
+    return 0;
+}
+
 static int test_sequence_of_commands(void)
 {
     app_serial_t d;
@@ -105,6 +126,8 @@ int main(void)
     RUN(test_letters);
     RUN(test_ignored);
     RUN(test_esc_then_letter);
+    RUN(test_ss3_cursor_keys);
+    RUN(test_esc_esc_key);
     RUN(test_sequence_of_commands);
     return failures ? 1 : 0;
 }

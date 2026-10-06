@@ -1,7 +1,7 @@
 #include "app_serial.h"
 #include <string.h>
 
-enum { ST_IDLE, ST_ESC, ST_CSI };
+enum { ST_IDLE, ST_ESC, ST_CSI, ST_SS3 };
 
 void app_serial_init(app_serial_t *d)
 {
@@ -55,14 +55,19 @@ bool app_serial_feed(app_serial_t *d, uint8_t c, app_cmd_t *cmd)
 {
     switch (d->state) {
     case ST_ESC:
-        if (c == '[') {
-            d->state = ST_CSI;
+        if (c == '[' || c == 'O') {
+            /* CSI (ESC [) ou SS3 (ESC O, flèches en mode « application cursor keys ») */
+            d->state = c == '[' ? ST_CSI : ST_SS3;
             d->len = 0;
             return false;
         }
         /* Échap seul : l'octet suivant est une touche ordinaire */
         d->state = c == 0x1b ? ST_ESC : ST_IDLE;
         return d->state == ST_IDLE && decode_char(c, cmd);
+    case ST_SS3:
+        /* Final SS3 décodé comme un CSI sans paramètre ; F1-F4 (P-S) ignorées */
+        d->state = ST_IDLE;
+        return c >= 'A' && c <= 'D' && decode_csi(d, c, cmd);
     case ST_CSI:
         if ((c >= '0' && c <= '9') || c == ';') {
             if (d->len < APP_SERIAL_MAX_PARAMS) d->params[d->len++] = (char)c;
