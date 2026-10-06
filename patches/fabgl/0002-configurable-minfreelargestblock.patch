@@ -1,0 +1,14 @@
+diff --git a/src/fabglconf.h b/src/fabglconf.h
+index 4dac3d20..d1babdf5 100644
+--- a/src/fabglconf.h
++++ b/src/fabglconf.h
+@@ -127,7 +127,9 @@
+ 
+ 
+ /** Size (in bytes) of largest block to maintain free */
++#ifndef FABGLIB_MINFREELARGESTBLOCK
+ #define FABGLIB_MINFREELARGESTBLOCK 40000
++#endif
+ 
+ 
+ /** Size of virtualkey queue */

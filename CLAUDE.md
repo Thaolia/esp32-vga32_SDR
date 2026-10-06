@@ -13,6 +13,10 @@ Operational rules for working in this repository. Project facts live in `@docs/A
 - Always pass an explicit build dir and sdkconfig: `idf.py -B build/<name> -D SDKCONFIG=build/<name>/sdkconfig ...`.
   `build/app` is the firmware, `build/host` the host tests, `build/rx_smoke`, `build/fabgl_smoke`, `build/spike-*` the probes.
   Never use the default `build/` root as an IDF build dir.
+- With `idf.py -C <project>` (smoke tests, esp-sdr stock), `-B` and `-D SDKCONFIG=` must be ABSOLUTE
+  (`$PWD/build/...`): relative paths resolve against the project dir and can write into a submodule.
+- After changing `sdkconfig.defaults`, delete `build/<name>/sdkconfig` and reconfigure: defaults never
+  override an existing sdkconfig.
 - Never use `sudo`. If a step seems to need it, stop and ask.
 
 ## Third-party code — never edit in place
@@ -32,8 +36,12 @@ Operational rules for working in this repository. Project facts live in `@docs/A
 
 - Keep the init order in `app_main`: radio (`espsdr_rx_init`) → PS/2 → VGA. Wi-Fi must allocate first,
   the VGA framebuffer takes what is left.
-- Never place `.data`/`.bss` above `0x3ffe8000`: the linker guard `sram_guard.ld` enforces it. Large
-  buffers (> 8 KB) must be justified against the measured heap in `docs/ARCHITECTURE.md`.
+- Never place `.data`/`.bss` above `0x3ffe8000`: the linker guard `sram_guard.ld` enforces it.
+- Heap headroom after the VGA framebuffer is ~5 KB (`docs/ARCHITECTURE.md`). Every new static buffer or
+  heap allocation costs screen lines: measure heap at each init stage on the board before and after,
+  and update the budget table. Never remove the `getViewPortHeight() == UI_HEIGHT` guard in `app_main`.
+- Create long-lived tasks with static stacks (`xTaskCreateStaticPinnedToCore`); install drivers before
+  `setResolution()` so FabGL gets the remaining heap.
 - Never allocate in the capture/DSP/render loops: all buffers are static or allocated at init.
 - `espsdr_rx_*` is single-caller: only the SDR task calls it after init.
 - `words` returned by `espsdr_rx_capture` is overwritten by the next capture: consume it immediately.
@@ -62,8 +70,10 @@ Operational rules for working in this repository. Project facts live in `@docs/A
 
 ## Hardware loop
 
-- Ask the user for the serial port before flashing (default `/dev/ttyUSB0`); only one board exists,
-  so never flash from parallel agents.
+- The reference board enumerates as `/dev/ttyACM0` (CH9102). Confirm the port before flashing; only one
+  board exists, so never flash from parallel agents.
+- Open the serial port with `dtr=False, rts=False` set BEFORE `open()` to avoid resetting the board, and
+  always give pyserial a read timeout.
 - Reference signal for validation: phone hotspot forced on Wi-Fi channel 6 → hump of about 20 MHz
   centred on 2437 MHz.
 
