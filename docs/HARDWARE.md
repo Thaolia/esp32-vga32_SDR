@@ -35,3 +35,14 @@ USB→PS/2 ne fonctionne que s'il est « combo » USB/PS/2. Mesure faite le 2026
 USB + adaptateur de l'utilisateur : lignes au repos à 1, **0 front d'horloge** pendant la frappe, sur
 les deux prises → clavier non compatible. Le contrôle par le terminal série (`idf.py monitor`) remplace
 le clavier dans ce cas.
+
+## Validation de bout en bout (2026-10-06, carte de référence)
+
+| Vérification | Résultat |
+|---|---|
+| Boot sans clavier PS/2 compatible | OK, viewport 384 lignes, aucun log d'erreur pendant 30 s |
+| Affichage bandeau / spectre / waterfall | OK |
+| Contrôle série : Shift+→, `r`, `g` | Bandeau `2447 MHz 80 MS/s G40` |
+| Compteur `err` après plusieurs minutes | 0 |
+| Hotspot téléphone | Bosse visible dans le spectre et le waterfall |
+| Contrôle PS/2 | Non validé : pas de clavier PS/2 compatible disponible |
